@@ -19,7 +19,7 @@ import { ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 @ApiTags('user')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @ApiOperation({
     description: 'This Api is used to create the user',
@@ -78,39 +78,55 @@ export class UserController {
     }
   }
 
-  //   @Patch(':id')
-  //   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //     try {
-  //       const user = await this.userService.create(createUserDto);
-  //       return res.status(HttpStatus.CREATED).json({
-  //         success: true,
-  //         message: 'user created successfully',
-  //         data: user,
-  //       });
-  //     } catch (error) {
-  //       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-  //         success: false,
-  //         message: error.message,
-  //         data: null,
-  //       });
-  //     }
-  //   }
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Res() res: Response) {
+    try {
+      let isUser = await this.userService.findOne(+id);
+      if (!isUser) {
+        return res.status(HttpStatus.NOT_FOUND).json({
+          success: false,
+          data: null,
+          message: "User not found Invalid Id"
+        });
+      }
+      await this.userService.update(isUser, updateUserDto);
+      return res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'user updated successfully',
+        data: null,
+      });
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: error.message,
+        data: null,
+      });
+    }
+  }
 
-  //   @Delete(':id')
-  //   remove(@Param('id') id: string) {
-  //     try {
-  //       const user = await this.userService.create(createUserDto);
-  //       return res.status(HttpStatus.CREATED).json({
-  //         success: true,
-  //         message: 'user created successfully',
-  //         data: user,
-  //       });
-  //     } catch (error) {
-  //       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-  //         success: false,
-  //         message: error.message,
-  //         data: null,
-  //       });
-  //     }
-  //   }
+  @Delete(':id')
+  async delete(@Param('id') id: string, @Res() res: Response) {
+    try {
+      let isUser = await this.userService.findOne(+id);
+      if (!isUser) {
+        return res.status(HttpStatus.NOT_FOUND).json({
+          success: false,
+          data: null,
+          message: "User not found Invalid Id"
+        });
+      }
+      await this.userService.remove(isUser);
+      return res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'user deleted successfully',
+        data: null,
+      });
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: error.message,
+        data: null,
+      });
+    }
+  }
 }
