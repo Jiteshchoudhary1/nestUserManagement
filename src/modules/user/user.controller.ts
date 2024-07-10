@@ -78,39 +78,39 @@ export class UserController {
     }
   }
 
-//   @Patch(':id')
-//   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-//     try {
-//       const user = await this.userService.create(createUserDto);
-//       return res.status(HttpStatus.CREATED).json({
-//         success: true,
-//         message: 'user created successfully',
-//         data: user,
-//       });
-//     } catch (error) {
-//       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-//         success: false,
-//         message: error.message,
-//         data: null,
-//       });
-//     }
-//   }
+  //   @Patch(':id')
+  //   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  //     try {
+  //       const user = await this.userService.create(createUserDto);
+  //       return res.status(HttpStatus.CREATED).json({
+  //         success: true,
+  //         message: 'user created successfully',
+  //         data: user,
+  //       });
+  //     } catch (error) {
+  //       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+  //         success: false,
+  //         message: error.message,
+  //         data: null,
+  //       });
+  //     }
+  //   }
 
-//   @Delete(':id')
-//   remove(@Param('id') id: string) {
-//     try {
-//       const user = await this.userService.create(createUserDto);
-//       return res.status(HttpStatus.CREATED).json({
-//         success: true,
-//         message: 'user created successfully',
-//         data: user,
-//       });
-//     } catch (error) {
-//       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-//         success: false,
-//         message: error.message,
-//         data: null,
-//       });
-//     }
-//   }
-// }
+  //   @Delete(':id')
+  //   remove(@Param('id') id: string) {
+  //     try {
+  //       const user = await this.userService.create(createUserDto);
+  //       return res.status(HttpStatus.CREATED).json({
+  //         success: true,
+  //         message: 'user created successfully',
+  //         data: user,
+  //       });
+  //     } catch (error) {
+  //       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+  //         success: false,
+  //         message: error.message,
+  //         data: null,
+  //       });
+  //     }
+  //   }
+}
