@@ -1,0 +1,35 @@
+Implementing User Management Microservice with Caching and Search
+
+
+Description: Create a Nest.js microservice for managing users. The service should include caching for frequently accessed data, support searching users, and allow users to block other users so that ignored users are not visible in search results.
+For database you can use either postgres or mongodb
+minimum fields that are needed for user are:
+id
+name
+surname
+username
+birthdate
+(you can add others as needed)
+for ignore you can think of fields as needed
+
+
+
+
+We need 2 controllers
+
+
+UserController:
+Implement CRUD operations for user data.
+Create an endpoint to search users by username and/or age range (can have min age, max age or both min and max age) (GET /users/search)
+
+
+BlockController
+block and unblock routes (no need to get blocked or unblocked users)
+
+
+Things to keep in mind:
+Writing tests is a huge bonus
+need to add simple validations for requests
+If you’ll be able to provide sophisticated architecture will be a bonus
+We don’t need any kind of auth mechanism. when you’ll be doing a query for search, or blocking/unblocking an user, just read id (subject) from jwt token. we don’t need to validate JWT token.
+
