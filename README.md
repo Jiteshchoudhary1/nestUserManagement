@@ -48,3 +48,9 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
+## To access the server use this url in browser
+
+```http://localhost:3000/api-docs
+
+```
