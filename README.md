@@ -21,7 +21,7 @@ update the credentials in .env file
 
 ## Step-4 Create the build of this nest app
 
-using this command npm run build
+using this command `npm run build`
 
 ## Step-5 Run this app using below commands
 
@@ -36,20 +36,7 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## To access the server use this url in browser
+## To access the swagger use this url in browser
 
 ```http://localhost:3000/api-docs
 
