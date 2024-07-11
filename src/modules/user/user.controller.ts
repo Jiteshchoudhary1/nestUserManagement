@@ -12,14 +12,14 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { UserService } from './user.service';
-import { CreateUserDto, PaginationDto } from './dto/create-user.dto';
+import { CreateUserDto, PaginationDto, SearchDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('user')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
   @ApiOperation({
     description: 'This Api is used to create the user',
@@ -59,6 +59,23 @@ export class UserController {
       });
     }
   }
+  @Get('/search')
+  async search(@Query() queryParams: SearchDto, @Res() res: Response) {
+    try {
+      const data = await this.userService.search(queryParams);
+      return res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'user list fetched successfully',
+        data: data,
+      });
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: error.message,
+        data: null,
+      });
+    }
+  }
 
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res: Response) {
@@ -79,14 +96,18 @@ export class UserController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Res() res: Response) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @Res() res: Response,
+  ) {
     try {
       let isUser = await this.userService.findOne(+id);
       if (!isUser) {
         return res.status(HttpStatus.NOT_FOUND).json({
           success: false,
           data: null,
-          message: "User not found Invalid Id"
+          message: 'User not found Invalid Id',
         });
       }
       await this.userService.update(isUser, updateUserDto);
@@ -112,7 +133,7 @@ export class UserController {
         return res.status(HttpStatus.NOT_FOUND).json({
           success: false,
           data: null,
-          message: "User not found Invalid Id"
+          message: 'User not found Invalid Id',
         });
       }
       await this.userService.remove(isUser);

@@ -9,7 +9,7 @@ import { Op } from 'sequelize';
 export class UserService {
   constructor(
     @InjectModel(User) private readonly userRepository: typeof User,
-  ) { }
+  ) {}
   async create(createUserDto: any) {
     return await this.userRepository.create(createUserDto);
   }
@@ -46,11 +46,50 @@ export class UserService {
   }
 
   async search(params: any) {
+    const today = new Date();
     const where = {};
     if (params.search && params.search != '') {
-      where['username'] = {
-        [Op.iLike]: `%${params.search}%`
-      }
+      where['user_name'] = {
+        [Op.iLike]: `%${params.search}%`,
+      };
+    }
+    if (params.min_age && params.max_age) {
+      const minBirthDate = new Date(
+        today.getFullYear() - params.max_age,
+        today.getMonth(),
+        today.getDate(),
+      );
+      const maxBirthDate = new Date(
+        today.getFullYear() - params.min_age,
+        today.getMonth(),
+        today.getDate(),
+      );
+      where['birth_date'] = {
+        [Op.between]: [minBirthDate, maxBirthDate],
+      };
+    } else if (params.min_age) {
+      let minBirthDate = new Date(
+        today.getFullYear() - params.min_age,
+        today.getMonth(),
+        today.getDate(),
+      )
+        .toISOString()
+        .slice(0, 10);
+      // minBirthDate = minBirthDate
+      console.log('minBirthDate', minBirthDate);
+      where['birth_date'] = {
+        [Op.gte]: minBirthDate,
+      };
+    } else if (params.max_age) {
+      const minBirthDate = new Date(
+        today.getFullYear() - params.max_age,
+        today.getMonth(),
+        today.getDate(),
+      );
+      console.log('minBirthDate', minBirthDate);
+      where['birth_date'] = {
+        [Op.lte]: minBirthDate,
+      };
     }
     // if (params)
     if (params.page && params.limit) {

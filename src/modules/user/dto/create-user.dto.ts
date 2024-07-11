@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsDateString,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateUserDto {
@@ -19,7 +25,7 @@ export class CreateUserDto {
   user_name: string;
 
   @ApiProperty({ required: true })
-  @IsString()
+  @IsDateString()
   @IsNotEmpty()
   birth_date: string;
 }
@@ -36,4 +42,23 @@ export class PaginationDto {
   @IsNumber()
   @Transform(({ value }) => parseInt(value))
   limit: number;
+}
+
+export class SearchDto extends PaginationDto {
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  search: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber()
+  @Transform(({ value }) => parseInt(value))
+  min_age: number;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNumber()
+  @Transform(({ value }) => parseInt(value))
+  max_age: number;
 }

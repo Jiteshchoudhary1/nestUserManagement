@@ -22,4 +22,19 @@ export class User extends Model {
 
   @Column({ type: DataType.BOOLEAN, allowNull: true, defaultValue: false })
   is_block: boolean;
+
+  @Column({
+    type: DataType.VIRTUAL,
+    get() {
+      const birthDate = this.getDataValue('birth_date');
+      if (birthDate) {
+        const birthDateObject = new Date(birthDate);
+        const ageDifMs = Date.now() - birthDateObject.getTime();
+        const ageDate = new Date(ageDifMs);
+        return Math.abs(ageDate.getUTCFullYear() - 1970);
+      }
+      return null;
+    },
+  })
+  age: number;
 }
