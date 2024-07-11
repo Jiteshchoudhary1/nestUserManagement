@@ -38,6 +38,4 @@ $ npm run start:prod
 
 ## To access the swagger use this url in browser
 
-```http://localhost:3000/api-docs
-
-```
+http://localhost:3000/api-docs
