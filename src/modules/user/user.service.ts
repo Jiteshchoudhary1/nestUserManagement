@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './entities/user.entity';
 import { Op } from 'sequelize';
@@ -25,10 +23,14 @@ export class UserService {
         },
         offset,
         limit,
+        raw: true,
+        nest: true,
       });
     } else {
       return await this.userRepository.findAndCountAll({
         where: { is_block: false },
+        raw: true,
+        nest: true,
       });
     }
   }
@@ -46,66 +48,57 @@ export class UserService {
   }
 
   async search(params: any) {
-    const today = new Date();
-    const where = {};
+    const where = { is_block: false };
     if (params.search && params.search != '') {
       where['user_name'] = {
         [Op.iLike]: `%${params.search}%`,
       };
     }
-    if (params.min_age && params.max_age) {
-      const minBirthDate = new Date(
-        today.getFullYear() - params.max_age,
-        today.getMonth(),
-        today.getDate(),
-      );
-      const maxBirthDate = new Date(
-        today.getFullYear() - params.min_age,
-        today.getMonth(),
-        today.getDate(),
-      );
+    const today = new Date();
+    const minBirthDate = params.max_age
+      ? new Date(
+          today.getFullYear() - params.max_age,
+          today.getMonth(),
+          today.getDate(),
+        )
+          .toISOString()
+          .slice(0, 10)
+      : null;
+
+    const maxBirthDate = params.min_age
+      ? new Date(
+          today.getFullYear() - params.min_age,
+          today.getMonth(),
+          today.getDate(),
+        )
+          .toISOString()
+          .slice(0, 10)
+      : null;
+    if (minBirthDate && maxBirthDate) {
       where['birth_date'] = {
         [Op.between]: [minBirthDate, maxBirthDate],
       };
-    } else if (params.min_age) {
-      let minBirthDate = new Date(
-        today.getFullYear() - params.min_age,
-        today.getMonth(),
-        today.getDate(),
-      )
-        .toISOString()
-        .slice(0, 10);
-      // minBirthDate = minBirthDate
-      console.log('minBirthDate', minBirthDate);
+    } else if (minBirthDate) {
       where['birth_date'] = {
         [Op.gte]: minBirthDate,
       };
-    } else if (params.max_age) {
-      const minBirthDate = new Date(
-        today.getFullYear() - params.max_age,
-        today.getMonth(),
-        today.getDate(),
-      );
-      console.log('minBirthDate', minBirthDate);
+    } else if (maxBirthDate) {
       where['birth_date'] = {
-        [Op.lte]: minBirthDate,
+        [Op.lte]: maxBirthDate,
       };
     }
-    // if (params)
     if (params.page && params.limit) {
       const page = Number(params.page) || 1;
       const limit = Number(params.limit) || 10;
       const offset = (page - 1) * limit;
       return await this.userRepository.findAndCountAll({
-        where: {
-          is_block: false,
-        },
+        where,
         offset,
         limit,
       });
     } else {
       return await this.userRepository.findAndCountAll({
-        where: { is_block: false },
+        where,
       });
     }
   }

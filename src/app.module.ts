@@ -9,7 +9,6 @@ import { User } from './modules/user/entities/user.entity';
 const { db_host, db_name, db_password, db_username } =
   configuration.databaseConfig;
 
-console.log('config we have here', configuration.databaseConfig);
 @Module({
   imports: [
     SequelizeModule.forRoot({

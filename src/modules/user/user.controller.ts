@@ -9,17 +9,22 @@ import {
   HttpStatus,
   Res,
   Query,
+  Inject,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { UserService } from './user.service';
 import { CreateUserDto, PaginationDto, SearchDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiOperation, ApiProperty, ApiTags } from '@nestjs/swagger';
-
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 @ApiTags('user')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   @ApiOperation({
     description: 'This Api is used to create the user',
@@ -45,12 +50,23 @@ export class UserController {
   @Get()
   async findAll(@Query() queryParams: PaginationDto, @Res() res: Response) {
     try {
-      const data = await this.userService.findAll(queryParams);
-      return res.status(HttpStatus.OK).json({
-        success: true,
-        message: 'user list fetched successfully',
-        data: data,
-      });
+      const key = `findAll${queryParams.limit}${queryParams.page}`;
+      let data = await this.cacheManager.get(key);
+      if (data) {
+        return res.status(HttpStatus.OK).json({
+          success: true,
+          message: 'user list fetched successfully',
+          data: data,
+        });
+      } else {
+        const data = await this.userService.findAll(queryParams);
+        await this.cacheManager.set(key, data, 20000);
+        return res.status(HttpStatus.OK).json({
+          success: true,
+          message: 'user list fetched successfully',
+          data: data,
+        });
+      }
     } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         success: false,
@@ -62,12 +78,23 @@ export class UserController {
   @Get('/search')
   async search(@Query() queryParams: SearchDto, @Res() res: Response) {
     try {
-      const data = await this.userService.search(queryParams);
-      return res.status(HttpStatus.OK).json({
-        success: true,
-        message: 'user list fetched successfully',
-        data: data,
-      });
+      const key = `search${queryParams.limit}${queryParams.page}${queryParams.search}${queryParams.min_age}${queryParams.max_age}`;
+      let data = await this.cacheManager.get(key);
+      if (data) {
+        return res.status(HttpStatus.OK).json({
+          success: true,
+          message: 'user list fetched successfully',
+          data: data,
+        });
+      } else {
+        const data = await this.userService.search(queryParams);
+        await this.cacheManager.set(key, data, 10000);
+        return res.status(HttpStatus.OK).json({
+          success: true,
+          message: 'user list fetched successfully',
+          data: data,
+        });
+      }
     } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         success: false,
